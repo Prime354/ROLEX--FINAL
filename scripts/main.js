@@ -449,7 +449,7 @@
   }
 
   // ==========================================================================
-  // ROLEX VIRTUAL CONCIERGE CHATBOT MODULE
+  // ROLEX VIRTUAL CONCIERGE CHATBOT MODULE (HAUTE HORLOGERIE SUITE)
   // ==========================================================================
   function setupChatbot() {
     const toggleBtn = document.getElementById('chatbot-toggle-btn');
@@ -459,28 +459,121 @@
     const form = document.getElementById('chatbot-form');
     const input = document.getElementById('chatbot-input');
     const chipsContainer = document.getElementById('chatbot-chips');
+    const soundBtn = document.getElementById('chatbot-sound-btn');
+    const clearBtn = document.getElementById('chatbot-clear-btn');
+    const genevaClockEl = document.getElementById('geneva-clock-time');
 
     if (!toggleBtn || !widget || !messagesContainer) return;
 
+    // --- State ---
+    let soundEnabled = true;
     let hasGreeted = false;
+    let audioCtx = null;
 
+    // --- 1. Real-Time Geneva Clock (Europe/Zurich) ---
+    function updateGenevaClock() {
+      if (!genevaClockEl) return;
+      try {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-GB', {
+          timeZone: 'Europe/Zurich',
+          hour12: false,
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        });
+        genevaClockEl.textContent = `${timeString} CET`;
+      } catch (err) {
+        // Fallback for older browsers
+        const now = new Date();
+        const utcHours = now.getUTCHours();
+        const cetHours = (utcHours + 1) % 24;
+        const pad = (n) => String(n).padStart(2, '0');
+        genevaClockEl.textContent = `${pad(cetHours)}:${pad(now.getUTCMinutes())}:${pad(now.getUTCSeconds())} CET`;
+      }
+    }
+    updateGenevaClock();
+    setInterval(updateGenevaClock, 1000);
+
+    // --- 2. Web Audio API Synthetic Mechanical Watch Escapement Sound ---
+    function playEscapementTick() {
+      if (!soundEnabled) return;
+      try {
+        const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtxClass) return;
+        if (!audioCtx) {
+          audioCtx = new AudioCtxClass();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const now = audioCtx.currentTime;
+
+        // Simulate high-beat Swiss escapement pallet jewels (2 micro clicks: tick-tock)
+        [0, 0.045].forEach((offset, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          const filter = audioCtx.createBiquadFilter();
+
+          filter.type = 'bandpass';
+          filter.frequency.setValueAtTime(idx === 0 ? 3200 : 4600, now + offset);
+          filter.Q.setValueAtTime(12, now + offset);
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(idx === 0 ? 1200 : 1800, now + offset);
+          osc.frequency.exponentialRampToValueAtTime(300, now + offset + 0.025);
+
+          gain.gain.setValueAtTime(0.08, now + offset);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.03);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          osc.start(now + offset);
+          osc.stop(now + offset + 0.035);
+        });
+      } catch (e) {
+        // AudioContext not allowed before user gesture or unsupported
+      }
+    }
+
+    // Toggle Sound Button
+    if (soundBtn) {
+      soundBtn.addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        soundBtn.classList.toggle('muted', !soundEnabled);
+        soundBtn.setAttribute('title', soundEnabled ? 'Mute Mechanical Sound' : 'Enable Mechanical Sound');
+        soundBtn.setAttribute('aria-label', soundEnabled ? 'Mute Mechanical Sound' : 'Enable Mechanical Sound');
+        if (soundEnabled) {
+          playEscapementTick();
+        }
+      });
+    }
+
+    // --- 3. Format Time ---
     function formatTime() {
       const now = new Date();
       return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
+    // --- 4. Toggle Chatbot Panel ---
     function toggleChat(open) {
       const isOpen = open !== undefined ? open : !widget.classList.contains('open');
       if (isOpen) {
         widget.classList.add('open');
         widget.setAttribute('aria-hidden', 'false');
-        if (!hasGreeted) {
+        if (!hasGreeted && messagesContainer.children.length === 0) {
           sendBotMessage(
-            "Good day. Welcome to the official Rolex Virtual Concierge. It is my distinct privilege to assist you with our horological collections, technical movements, or reserving a private consultation.\n\nHow may I advise your exploration today?"
+            "Good day. Welcome to the official **Rolex Virtual Concierge** in Geneva.\n\nIt is our supreme privilege to advise your horological acquisition. You may inquire about our iconic timepieces, in-house mechanical calibres, or reserve a private consultation.",
+            null,
+            250
           );
           hasGreeted = true;
         }
         if (input) input.focus();
+        playEscapementTick();
       } else {
         widget.classList.remove('open');
         widget.setAttribute('aria-hidden', 'true');
@@ -490,13 +583,33 @@
     toggleBtn.addEventListener('click', () => toggleChat());
     if (closeBtn) closeBtn.addEventListener('click', () => toggleChat(false));
 
+    // --- 5. Reset Conversation ---
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        messagesContainer.innerHTML = '';
+        hasGreeted = false;
+        playEscapementTick();
+        sendBotMessage(
+          "Conversation reset. How may the Geneva Concierge assist your horological inquiries today?",
+          null,
+          200
+        );
+      });
+    }
+
+    // --- 6. Append Message to Stream ---
     function appendMessage(text, isUser, actionHtml) {
       const msgWrapper = document.createElement('div');
       msgWrapper.className = `chat-msg ${isUser ? 'chat-msg-user' : 'chat-msg-bot'}`;
 
       const bubble = document.createElement('div');
       bubble.className = isUser ? 'chat-bubble-user' : 'chat-bubble-bot';
-      bubble.innerHTML = text.replace(/\n/g, '<br>');
+
+      // Convert markdown **bold** to <strong>
+      let formattedText = text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+      bubble.innerHTML = formattedText;
 
       if (actionHtml) {
         const actionContainer = document.createElement('div');
@@ -509,6 +622,7 @@
             e.preventDefault();
             const watchId = btn.getAttribute('data-chat-spec');
             openSpecModal(watchId);
+            playEscapementTick();
           });
         });
 
@@ -520,7 +634,10 @@
             const targetEl = document.getElementById(targetId);
             if (targetEl) {
               targetEl.scrollIntoView({ behavior: 'smooth' });
-              toggleChat(false);
+              // On mobile, close chat so user sees target
+              if (window.innerWidth <= 768) {
+                toggleChat(false);
+              }
             }
           });
         });
@@ -534,8 +651,13 @@
       msgWrapper.appendChild(time);
       messagesContainer.appendChild(msgWrapper);
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      if (!isUser) {
+        playEscapementTick();
+      }
     }
 
+    // --- 7. Typing Indicator ---
     function showTypingIndicator() {
       const typingEl = document.createElement('div');
       typingEl.className = 'chat-msg chat-msg-bot chat-typing-wrapper';
@@ -561,113 +683,206 @@
       }, delay);
     }
 
+    // --- 8. Timepiece Card Templates ---
+    const watchCards = {
+      'submariner': `
+        <div class="chat-watch-card">
+          <img src="assets/images/submariner.jpg" alt="Rolex Submariner Date" class="chat-watch-img">
+          <div class="chat-watch-info">
+            <span class="chat-watch-series">Professional Sea-Dweller</span>
+            <span class="chat-watch-name">Submariner Date 41 mm</span>
+            <span class="chat-watch-price">$10,250</span>
+            <span class="chat-watch-specs">Oystersteel &bull; 300m Waterproof &bull; Cerachrom</span>
+            <button class="chat-action-btn" data-chat-spec="submariner-date">Inspect Technical Specs &rarr;</button>
+          </div>
+        </div>
+      `,
+      'daytona': `
+        <div class="chat-watch-card">
+          <img src="assets/images/daytona.jpg" alt="Rolex Cosmograph Daytona" class="chat-watch-img">
+          <div class="chat-watch-info">
+            <span class="chat-watch-series">Professional Motorsport</span>
+            <span class="chat-watch-name">Cosmograph Daytona</span>
+            <span class="chat-watch-price">$32,100</span>
+            <span class="chat-watch-specs">18 ct Yellow Gold &bull; Calibre 4131 &bull; Chronograph</span>
+            <button class="chat-action-btn" data-chat-spec="daytona">Inspect Technical Specs &rarr;</button>
+          </div>
+        </div>
+      `,
+      'datejust': `
+        <div class="chat-watch-card">
+          <img src="assets/images/datejust.jpg" alt="Rolex Datejust 36" class="chat-watch-img">
+          <div class="chat-watch-info">
+            <span class="chat-watch-series">Classic Horology</span>
+            <span class="chat-watch-name">Datejust 36</span>
+            <span class="chat-watch-price">$14,350</span>
+            <span class="chat-watch-specs">Yellow Rolesor &bull; Fluted Bezel &bull; Jubilee</span>
+            <button class="chat-action-btn" data-chat-spec="datejust-36">Inspect Technical Specs &rarr;</button>
+          </div>
+        </div>
+      `,
+      'daydate': `
+        <div class="chat-watch-card">
+          <img src="assets/images/daydate.jpg" alt="Rolex Day-Date 40" class="chat-watch-img">
+          <div class="chat-watch-info">
+            <span class="chat-watch-series">The Presidents' Watch</span>
+            <span class="chat-watch-name">Day-Date 40</span>
+            <span class="chat-watch-price">$41,500</span>
+            <span class="chat-watch-specs">18 ct Everose Gold &bull; Olive Green &bull; Calibre 3255</span>
+            <button class="chat-action-btn" data-chat-spec="day-date-40">Inspect Technical Specs &rarr;</button>
+          </div>
+        </div>
+      `,
+      'gmt': `
+        <div class="chat-watch-card">
+          <img src="assets/images/gmt.jpg" alt="Rolex GMT-Master II" class="chat-watch-img">
+          <div class="chat-watch-info">
+            <span class="chat-watch-series">Aviation Dual-Time</span>
+            <span class="chat-watch-name">GMT-Master II "Pepsi"</span>
+            <span class="chat-watch-price">$11,100</span>
+            <span class="chat-watch-specs">Cerachrom Red/Blue &bull; Calibre 3285 &bull; Jubilee</span>
+            <button class="chat-action-btn" data-chat-spec="gmt-master-ii">Inspect Technical Specs &rarr;</button>
+          </div>
+        </div>
+      `,
+      'yachtmaster': `
+        <div class="chat-watch-card">
+          <img src="assets/images/yachtmaster.jpg" alt="Rolex Yacht-Master 42" class="chat-watch-img">
+          <div class="chat-watch-info">
+            <span class="chat-watch-series">Regatta Navigation</span>
+            <span class="chat-watch-name">Yacht-Master 42</span>
+            <span class="chat-watch-price">$14,050</span>
+            <span class="chat-watch-specs">RLX Titanium &bull; Matte Ceramic Bezel &bull; Calibre 3235</span>
+            <button class="chat-action-btn" data-chat-spec="yacht-master-42">Inspect Technical Specs &rarr;</button>
+          </div>
+        </div>
+      `
+    };
+
+    // --- 9. Comprehensive Horological Advisory Engine ---
     function getBotResponse(userText) {
       const q = userText.toLowerCase();
 
-      // 1. Diver / Submariner / Underwater
-      if (q.includes('submariner') || q.includes('diver') || q.includes('diving') || q.includes('waterproof') || q.includes('sea')) {
+      // 1. Submariner / Divers / Underwater / Deep Sea / Waterproof
+      if (q.includes('submariner') || q.includes('diver') || q.includes('diving') || q.includes('waterproof') || q.includes('sea') || q.includes('underwater')) {
         return {
-          text: "The quintessential divers' instrument is the **Submariner Date** ($10,250). Forged from aerospace-grade Oystersteel with an impervious 300 metres (1,000 ft) water resistance, a unidirectional Cerachrom ceramic bezel with 60-minute graduations, and high-legibility Chromalight luminescence.",
-          action: `<button class="chat-action-btn" data-chat-spec="submariner-date">Inspect Submariner Specs &rarr;</button>`
+          text: "The benchmark of oceanic exploration: the **Submariner Date** ($10,250) is crafted from corrosion-proof aerospace Oystersteel. Featuring a unidirectional rotatable 60-minute Cerachrom ceramic bezel and the Triplock triple waterproofness system hermetically sealed to 300 metres (1,000 feet).",
+          action: watchCards.submariner
         };
       }
 
-      // 2. Daytona / Chronograph / Racing / Speed
-      if (q.includes('daytona') || q.includes('chronograph') || q.includes('racing') || q.includes('tachymeter')) {
+      // 2. Daytona / Chronograph / Racing / Motorsports / Speed / Tachymeter
+      if (q.includes('daytona') || q.includes('chronograph') || q.includes('racing') || q.includes('motorsport') || q.includes('tachymeter') || q.includes('speed')) {
         return {
-          text: "Born for motorsport champions, the **Cosmograph Daytona** ($32,100) is forged from 18 ct yellow gold with a high-tech black Cerachrom tachymetric bezel. Powered by the in-house Calibre 4131 chronograph movement with a 72-hour power reserve.",
-          action: `<button class="chat-action-btn" data-chat-spec="daytona">Inspect Daytona Specs &rarr;</button>`
+          text: "Born for speed and endurance on the Daytona International Speedway: the **Cosmograph Daytona** ($32,100). Forged from 18 ct yellow gold with a high-performance black Cerachrom tachymetric scale and powered by our in-house Calibre 4131 mechanical chronograph movement.",
+          action: watchCards.daytona
         };
       }
 
-      // 3. Datejust / Classic / Jubilee / Everyday
-      if (q.includes('datejust') || q.includes('classic') || q.includes('36')) {
+      // 3. Datejust / Classic / Jubilee / Everyday / Dress
+      if (q.includes('datejust') || q.includes('classic') || q.includes('everyday') || q.includes('jubilee') || q.includes('rolesor') || q.includes('36')) {
         return {
-          text: "The **Datejust 36** ($14,350) represents the benchmark of classic horology. Crafted in Yellow Rolesor (Oystersteel and 18 ct yellow gold) with a fluted bezel, champagne sunray dial, comfortable Jubilee bracelet, and the self-winding Calibre 3235 with 70 hours of autonomy.",
-          action: `<button class="chat-action-btn" data-chat-spec="datejust-36">Inspect Datejust Specs &rarr;</button>`
+          text: "The pure definition of horological timelessness: the **Datejust 36** ($14,350). Cast in Yellow Rolesor (a harmonious marriage of resilient Oystersteel and pure 18 ct yellow gold), boasting the iconic fluted bezel, champagne sunray dial, and supple five-piece Jubilee bracelet.",
+          action: watchCards.datejust
         };
       }
 
-      // 4. Day-Date / Presidents / Everose / Gold
-      if (q.includes('day-date') || q.includes('daydate') || q.includes('president') || q.includes('everose')) {
+      // 4. Day-Date / President / Everose / Gold / Elite
+      if (q.includes('day-date') || q.includes('daydate') || q.includes('president') || q.includes('everose') || q.includes('leaders')) {
         return {
-          text: "Renowned as 'The Presidents' Watch', the **Day-Date 40** ($41,500) is cast exclusively in precious metals. Presented in 18 ct Everose gold with an olive green dial and the iconic semi-circular three-piece President bracelet.",
-          action: `<button class="chat-action-btn" data-chat-spec="day-date-40">Inspect Day-Date Specs &rarr;</button>`
+          text: "Known universally as **The Presidents' Watch**: the **Day-Date 40** ($41,500). Exclusively sculpted in noble precious metals, this edition features patented 18 ct Everose gold, an olive green sunray dial, the full day-of-the-week spelled out at 12 o'clock, and the signature President bracelet.",
+          action: watchCards.daydate
         };
       }
 
-      // 5. GMT / Pepsi / Aviation / Travel / Dual Time
-      if (q.includes('gmt') || q.includes('pepsi') || q.includes('aviation') || q.includes('travel') || q.includes('dual time') || q.includes('timezone')) {
+      // 5. GMT / Pepsi / Aviation / Pilot / Dual Time / Timezone
+      if (q.includes('gmt') || q.includes('pepsi') || q.includes('aviation') || q.includes('pilot') || q.includes('flight') || q.includes('dual time') || q.includes('timezone') || q.includes('travel')) {
         return {
-          text: "Designed for international globetrotters, the **GMT-Master II** ($11,100) boasts the celebrated red and blue 'Pepsi' Cerachrom ceramic bezel. It reads two distinct timezones simultaneously driven by Calibre 3285.",
-          action: `<button class="chat-action-btn" data-chat-spec="gmt-master-ii">Inspect GMT-Master Specs &rarr;</button>`
+          text: "Engineered for international aviators and intercontinental travelers: the **GMT-Master II** ($11,100). Equipped with the renowned two-colour red and blue 'Pepsi' Cerachrom ceramic bezel and an independent 24-hour arrow hand to display two time zones simultaneously.",
+          action: watchCards.gmt
         };
       }
 
-      // 6. Yacht-Master / Titanium
-      if (q.includes('yacht') || q.includes('titanium') || q.includes('rlx')) {
+      // 6. Yacht-Master / Sailing / Titanium / Regatta
+      if (q.includes('yacht') || q.includes('regatta') || q.includes('sailing') || q.includes('boat') || q.includes('titanium') || q.includes('rlx')) {
         return {
-          text: "Engineered for sailing navigators, the **Yacht-Master 42** ($14,050) is sculpted from aerospace-grade RLX titanium (grade 5 alloy), featuring a bidirectional matte black ceramic bezel with polished raised numerals.",
-          action: `<button class="chat-action-btn" data-chat-spec="yacht-master-42">Inspect Yacht-Master Specs &rarr;</button>`
+          text: "Created for elite regatta navigators: the **Yacht-Master 42** ($14,050). Milled from lightweight, ultra-tough grade 5 **RLX titanium** with a satin finish, bidirectional matte black Cerachrom bezel with polished numerals, and high-contrast Chromalight display.",
+          action: watchCards.yachtmaster
         };
       }
 
-      // 7. Calibre / Movement / Mechanism / Escapement / Parachrom
-      if (q.includes('calibre') || q.includes('movement') || q.includes('mechanism') || q.includes('chronergy') || q.includes('parachrom') || q.includes('accuracy') || q.includes('precision') || q.includes('reserve')) {
+      // 7. Calibre / Movement / Mechanism / Escapement / Parachrom / Chronergy / Accuracy / Precision
+      if (q.includes('calibre') || q.includes('caliber') || q.includes('movement') || q.includes('mechanism') || q.includes('escapement') || q.includes('parachrom') || q.includes('chronergy') || q.includes('accuracy') || q.includes('precision') || q.includes('reserve') || q.includes('3235') || q.includes('4131') || q.includes('3255') || q.includes('3285')) {
         return {
-          text: "Rolex movements are developed and assembled entirely in-house in Geneva. The new-generation **Calibre 3235** features our patented Chronergy escapement (high energy efficiency, paramagnetic nickel-phosphorus), blue Parachrom hairspring (10x more resistant to shocks), and provides ~70 hours of autonomy with Superlative Chronometer accuracy (-2/+2 sec/day).",
-          action: `<button class="chat-action-btn" data-chat-scroll="craftsmanship">View Engineering Grid &rarr;</button>`
+          text: "Every Rolex calibre is conceived, developed, and hand-regulated entirely in-house in Geneva:\n&bull; **Calibre 3235 & 3255**: Features our patented Chronergy escapement (paramagnetic nickel-phosphorus alloy with 15% higher energy efficiency) and blue Parachrom hairspring offering 10x greater shock resistance.\n&bull; **70-72 Hour Power Reserve**: Enjoy weekend autonomy from Friday evening through Monday morning.\n&bull; **Superlative Chronometer**: Regulated to -2/+2 seconds per day after casing — more than twice as stringent as official Swiss COSC standards.",
+          action: `<button class="chat-action-btn" data-chat-scroll="craftsmanship">Inspect Geneva Engineering &rarr;</button>`
         };
       }
 
-      // 8. Pricing / Cost / How much
-      if (q.includes('price') || q.includes('cost') || q.includes('how much') || q.includes('worth') || q.includes('quote')) {
+      // 8. Pricing / Price / Cost / Catalog / MSRP
+      if (q.includes('price') || q.includes('cost') || q.includes('how much') || q.includes('worth') || q.includes('catalog') || q.includes('quote') || q.includes('rate')) {
         return {
-          text: "Current official collection pricing:\n&bull; Submariner Date: **$10,250**\n&bull; GMT-Master II: **$11,100**\n&bull; Yacht-Master 42 (RLX Titanium): **$14,050**\n&bull; Datejust 36 (Two-Tone Gold): **$14,350**\n&bull; Cosmograph Daytona: **$32,100**\n&bull; Day-Date 40 (Everose Gold): **$41,500**",
-          action: `<button class="chat-action-btn" data-chat-scroll="collection">Browse Timepieces &rarr;</button>`
+          text: "Current official collection manufacturer suggested pricing:\n&bull; **Submariner Date** (41 mm, Oystersteel): **$10,250**\n&bull; **GMT-Master II** (40 mm, 'Pepsi' Bezel): **$11,100**\n&bull; **Yacht-Master 42** (42 mm, RLX Titanium): **$14,050**\n&bull; **Datejust 36** (Two-Tone Gold & Steel): **$14,350**\n&bull; **Cosmograph Daytona** (18 ct Gold): **$32,100**\n&bull; **Day-Date 40** (18 ct Everose Gold): **$41,500**\n\nAll timepieces carry our 5-year international warranty seal.",
+          action: `<button class="chat-action-btn" data-chat-scroll="collection">Browse Collection Gallery &rarr;</button>`
         };
       }
 
-      // 9. Appointment / Consultation / Book / Viewing / Boutique / Buy
-      if (q.includes('appointment') || q.includes('book') || q.includes('consultation') || q.includes('viewing') || q.includes('boutique') || q.includes('jeweler') || q.includes('buy') || q.includes('purchase')) {
+      // 9. Appointment / Consultation / Book / Boutique / Jewelers / Availability / Buy / Waitlist
+      if (q.includes('appointment') || q.includes('book') || q.includes('consultation') || q.includes('boutique') || q.includes('store') || q.includes('jeweler') || q.includes('buy') || q.includes('purchase') || q.includes('order') || q.includes('waitlist') || q.includes('allocation')) {
         return {
-          text: "We would be honored to arrange an exclusive private consultation at an Official Rolex Jeweler for you. You may submit your contact information in our VIP Concierge reservation form.",
-          action: `<button class="chat-action-btn" data-chat-scroll="concierge">Book Appointment &rarr;</button>`
+          text: "To experience a timepiece or discuss allocation priorities, we recommend reserving a private one-on-one consultation with an Official Rolex Jeweler.\n\nYou may submit your request directly via our private concierge form below, and a client advisor will contact you confidentially.",
+          action: `<button class="chat-action-btn" data-chat-scroll="concierge">Reserve Private Appointment &rarr;</button>`
         };
       }
 
-      // 10. Animation / Scroll / Disassembly / 3D
-      if (q.includes('scroll') || q.includes('disassembly') || q.includes('animation') || q.includes('background') || q.includes('3d') || q.includes('frames')) {
+      // 10. Disassembly / Scroll / Animation / 3D / Background
+      if (q.includes('scroll') || q.includes('disassembly') || q.includes('animation') || q.includes('background') || q.includes('3d') || q.includes('exploded') || q.includes('frames') || q.includes('render')) {
         return {
-          text: "Our interactive website renders a continuous 300-frame horological deconstruction directly behind the content! As you scroll from the top to the bottom, the Datejust 36 deconstructs into individual mechanical components and reassembles fluidly.",
+          text: "Our interactive digital experience renders an ultra-high-definition 300-frame horological disassembly directly behind this interface! As you scroll down the page, the Datejust 36 deconstructs into its balance wheel, mainspring barrel, train wheel bridge, and case architecture in synchronization with your scroll scrub.",
           action: null
         };
       }
 
-      // 11. Materials / Steel / Gold / Ceramic
-      if (q.includes('material') || q.includes('steel') || q.includes('gold') || q.includes('ceramic') || q.includes('scratch')) {
+      // 11. Materials / Steel / Gold / Ceramic / Titanium
+      if (q.includes('material') || q.includes('steel') || q.includes('gold') || q.includes('ceramic') || q.includes('scratch') || q.includes('cerachrom') || q.includes('oystersteel')) {
         return {
-          text: "Rolex operates its own exclusive foundry, engineering proprietary alloys: **Oystersteel** (904L aerospace grade with supreme corrosion resistance), **18 ct Everose Gold** (patented formula resisting chlorine and UV discoloration), and **Cerachrom** (high-tech ceramic virtually impossible to scratch).",
+          text: "Rolex is one of the rare manufactures to operate its own dedicated in-house foundry:\n&bull; **Oystersteel**: Specially developed 904L aerospace superalloy offering supreme sheen and corrosion resistance.\n&bull; **18 ct Everose Gold**: Patented alloy containing a touch of platinum to preserve its warm pink hue indefinitely.\n&bull; **Cerachrom Ceramic**: Diamond-hard ceramic that is virtually impervious to scratches, corrosion, and UV discoloration.",
+          action: `<button class="chat-action-btn" data-chat-scroll="craftsmanship">View Material Innovations &rarr;</button>`
+        };
+      }
+
+      // 12. Heritage / History / Hans Wilsdorf / Foundation
+      if (q.includes('history') || q.includes('heritage') || q.includes('wilsdorf') || q.includes('founded') || q.includes('1905') || q.includes('geneva') || q.includes('switzerland') || q.includes('swiss')) {
+        return {
+          text: "Founded in 1905 by visionary Hans Wilsdorf, Rolex has pioneered modern watchmaking for over a century:\n&bull; **1926**: The first waterproof wristwatch, the legendary 'Oyster'.\n&bull; **1931**: The patented Perpetual rotor self-winding mechanism.\n&bull; **1945**: The Datejust, first self-winding chronometer with date window.\n&bull; **1953**: The Submariner, first diver's watch waterproof to 100 metres.",
           action: null
         };
       }
 
-      // 12. Greetings
-      if (q.includes('hello') || q.includes('hi') || q.includes('hey') || q.includes('good morning') || q.includes('good afternoon') || q.includes('greetings')) {
+      // 13. Greetings
+      if (q.includes('hello') || q.includes('hi') || q.includes('hey') || q.includes('good day') || q.includes('good morning') || q.includes('good afternoon') || q.includes('greetings')) {
         return {
-          text: "Greetings. It is our absolute pleasure to welcome you. Would you like a recommendation on our professional timepieces, technical calibre specifications, or boutique availability?",
+          text: "Greetings. It is an honor to welcome you to Rolex. Would you like a personalized recommendation for professional sports timepieces, our classic dress collection, or technical calibre insights?",
+          action: null
+        };
+      }
+
+      // 14. Thank you
+      if (q.includes('thank') || q.includes('thanks') || q.includes('merci') || q.includes('danke')) {
+        return {
+          text: "You are most cordially welcome. It is our pleasure to assist. Please let us know whenever you wish to explore further or schedule an appointment at an Official Rolex Jeweler.",
           action: null
         };
       }
 
       // Default Luxury Fallback
       return {
-        text: "Rolex watches are crafted with uncompromised precision and tested to the highest standards of Swiss watchmaking. How may I assist your inquiry? You may ask about our collections (Submariner, Daytona, Datejust, Day-Date, GMT-Master), our in-house calibres, or booking an appointment.",
-        action: `<button class="chat-action-btn" data-chat-scroll="collection">Explore Collection &rarr;</button>`
+        text: "Rolex timepieces represent the pinnacle of Swiss precision, endurance, and timeless aesthetics. How may I assist your exploration? You may ask regarding our professional models (Submariner, Daytona, GMT-Master II), classic icons (Datejust, Day-Date), movement specifications, or arranging a boutique consultation.",
+        action: `<button class="chat-action-btn" data-chat-scroll="collection">Explore All Models &rarr;</button>`
       };
     }
 
-    // Handle form submit
+    // --- 10. Handle Form Submission ---
     if (form && input) {
       form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -682,7 +897,7 @@
       });
     }
 
-    // Handle quick suggestion chips
+    // --- 11. Handle Prompt Chips ---
     if (chipsContainer) {
       chipsContainer.querySelectorAll('.chat-chip').forEach(chip => {
         chip.addEventListener('click', () => {
