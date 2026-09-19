@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Rolex Oyster Perpetual Datejust 36. An ultra-luxury horological experience featuring full-page scroll-linked 300-frame background watch deconstruction and frosted glass interface.">
+  <meta name="theme-color" content="#00472a">
+  <title>Rolex Oyster Perpetual Datejust 36 | The Benchmark of Luxury Watchmaking</title>
+  
+  <!-- Favicon / Brand Coronet -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23c5a059'><path d='M2 19h20v2H2v-2zm1.5-6.5L7 16l5-8 5 8 3.5-3.5L22 17H2l1.5-4.5zM7 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm10 0a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm-5-3a2 2 0 1 1 0 4 2 2 0 0 1 0-4z'/></svg>">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+  <!-- ==========================================================================
+       FIXED FULL-PAGE BACKGROUND CANVAS: 300-Frame Scroll-Linked Animation
+       ========================================================================== -->
+  <canvas id="bg-canvas" class="bg-canvas" aria-hidden="true"></canvas>
+
+  <!-- ==========================================================================
+       FLOATING GLASS NAVBAR
+       ========================================================================== -->
+  <header class="site-header">
+    <nav class="glass-nav" aria-label="Main Navigation">
+      <a href="#hero" class="nav-brand" aria-label="Rolex Home">
+        <svg class="brand-crown" viewBox="0 0 48 38" fill="currentColor" aria-hidden="true">
+          <circle cx="4.5" cy="11.5" r="3.2"/>
+          <circle cx="14.2" cy="5.2" r="3.2"/>
+          <circle cx="24" cy="3.2" r="3.2"/>
+          <circle cx="33.8" cy="5.2" r="3.2"/>
+          <circle cx="43.5" cy="11.5" r="3.2"/>
+          <path d="M7 16.5 L12.5 30 L35.5 30 L41 16.5 L31.5 24 L24 9.5 L16.5 24 Z"/>
+          <rect x="11.5" y="32.5" width="25" height="3.5" rx="1.5"/>
+        </svg>
+        <span class="brand-text">ROLEX</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#hero" class="nav-link active">Overview</a></li>
+        <li><a href="#craftsmanship" class="nav-link">Craftsmanship</a></li>
+        <li><a href="#collection" class="nav-link">Collection</a></li>
+        <li><a href="#testimonials" class="nav-link">Heritage</a></li>
+        <li><a href="#concierge" class="nav-link">Concierge</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="#concierge" class="btn-glass-primary">Book Consultation</a>
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle navigation menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ==========================================================================
+         HERO SECTION: Majestic headline and specs ribbon
+         ========================================================================== -->
+    <section id="hero" class="hero-section">
+      <div class="hero-eyebrow">
+        <span class="eyebrow-dot"></span>
+        <span>The Benchmark of Classic Watchmaking</span>
+      </div>
+
+      <h1 class="hero-title">
+        Oyster Perpetual <br>
+        <span class="gold-text">Datejust 36</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        A paragon of elegance, mechanical mastery, and superlative chronometer accuracy. Scroll to witness 300 microscopic horological components deconstruct and reassemble fluidly across the canvas behind.
+      </p>
+
+      <div class="hero-cta-group">
+        <a href="#collection" class="btn-glass-primary btn-large">Explore Timepieces</a>
+        <a href="#craftsmanship" class="btn-glass-secondary btn-large">Discover Craftsmanship &darr;</a>
+      </div>
+
+      <div class="hero-specs-ribbon" aria-label="Key Specifications">
+        <div class="spec-item">
+          <strong>Material:</strong> Oystersteel &amp; 18ct Gold
+        </div>
+        <div class="spec-divider"></div>
+        <div class="spec-item">
+          <strong>Diameter:</strong> 36 mm Case
+        </div>
+        <div class="spec-divider"></div>
+        <div class="spec-item">
+          <strong>Movement:</strong> Calibre 3235
+        </div>
+        <div class="spec-divider"></div>
+        <div class="spec-item">
+          <strong>Power Reserve:</strong> ~70 Hours
+        </div>
+      </div>
+
+      <a href="#craftsmanship" class="scroll-indicator-cta" aria-label="Scroll down to explore">
+        <span>Scroll to Explore</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </a>
+    </section>
+
+    <!-- ==========================================================================
+         CRAFTSMANSHIP & ENGINEERING GRID: Glass Panels
+         ========================================================================== -->
+    <section id="craftsmanship" class="section-padding">
+      <div class="container">
+        <header class="section-header">
+          <span class="section-badge">Horological Engineering</span>
+          <h2 class="section-title">The Art of Swiss Watchmaking</h2>
+          <p class="section-subtitle">
+            Every component of a Rolex watch is conceived, manufactured, and rigorously tested in Switzerland to exceed the world's most demanding standards of precision.
+          </p>
+        </header>
+
+        <div class="craftsmanship-grid">
+          <!-- Card 1: Swiss Movement -->
+          <article class="glass-card">
+            <div class="card-icon-box" aria-hidden="true">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="12" r="9"></circle>
+                <circle cx="12" cy="12" r="4"></circle>
+                <line x1="12" y1="2" x2="12" y2="5"></line>
+                <line x1="12" y1="19" x2="12" y2="22"></line>
+                <line x1="2" y1="12" x2="5" y2="12"></line>
+                <line x1="19" y1="12" x2="22" y2="12"></line>
+              </svg>
+            </div>
+            <h3 class="card-title">Swiss Movement</h3>
+            <p class="card-text">
+              Manufacture Calibre 3235 self-winding mechanical movement with Chronergy escapement and blue Parachrom hairspring, offering exceptional resistance to magnetic fields and shocks.
+            </p>
+          </article>
+
+          <!-- Card 2: Sapphire Crystal -->
+          <article class="glass-card">
+            <div class="card-icon-box" aria-hidden="true">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M6 3h12l4 6-10 12L2 9l4-6z"></path>
+                <path d="M2 9h20"></path>
+                <path d="M10 3v6l2 12 2-12V3"></path>
+              </svg>
+            </div>
+            <h3 class="card-title">Sapphire Crystal</h3>
+            <p class="card-text">
+              Synthesized corundum virtually impervious to scratches, featuring the Cyclops magnifying lens over the date aperture with double anti-reflective coating for crystal clarity.
+            </p>
+          </article>
+
+          <!-- Card 3: Waterproof Design -->
+          <article class="glass-card">
+            <div class="card-icon-box" aria-hidden="true">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <path d="M9 12l2 2 4-4"></path>
+              </svg>
+            </div>
+            <h3 class="card-title">Waterproof Design</h3>
+            <p class="card-text">
+              Pioneered by Rolex with the original Oyster case in 1926. Monobloc middle case carved from solid Oystersteel, hermetically sealed with the Twinlock winding crown to 100 meters.
+            </p>
+          </article>
+
+          <!-- Card 4: Lifetime Warranty & Superlative Certification -->
+          <article class="glass-card">
+            <div class="card-icon-box" aria-hidden="true">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+            </div>
+            <h3 class="card-title">Lifetime Reliability</h3>
+            <p class="card-text">
+              Every timepiece carries the Superlative Chronometer certification (-2/+2 seconds per day accuracy after casing) backed by an international 5-year guarantee of horological excellence.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         COLLECTION SHOWCASE: Glass Product Cards Over Moving Background
+         ========================================================================== -->
+    <section id="collection" class="section-padding">
+      <div class="container">
+        <header class="section-header">
+          <span class="section-badge">Exclusive Selection</span>
+          <h2 class="section-title">Iconic Rolex Timepieces</h2>
+          <p class="section-subtitle">
+            Distinctive watches engineered for deep-sea diving, aerospace navigation, and distinguished achievement. Select any model to inspect full horological specifications.
+          </p>
+        </header>
+
+        <div class="collection-grid">
+          <!-- Watch 1: Datejust 36 -->
+          <article class="product-card">
+            <div class="product-img-wrapper">
+              <span class="product-badge-corner">Classic Icon</span>
+              <img src="assets/images/datejust.jpg" alt="Rolex Oyster Perpetual Datejust 36" class="product-img" loading="lazy">
+            </div>
+            <div class="product-content">
+              <span class="product-series">Oyster Perpetual</span>
+              <h3 class="product-name">Datejust 36</h3>
+              <p class="product-desc">
+                Oystersteel and 18 ct yellow gold with fluted bezel, champagne dial, and comfortable Jubilee five-piece bracelet.
+              </p>
+              <div class="product-meta">
+                <span class="product-price">$14,350</span>
+                <button class="btn-glass-primary" data-view-specs="datejust-36" aria-label="View specifications for Datejust 36">View Details</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Watch 2: Submariner Date -->
+          <article class="product-card">
+            <div class="product-img-wrapper">
+              <span class="product-badge-corner">Divers' Archetype</span>
+              <img src="assets/images/submariner.jpg" alt="Rolex Submariner Date 41mm" class="product-img" loading="lazy">
+            </div>
+            <div class="product-content">
+              <span class="product-series">Oyster Perpetual</span>
+              <h3 class="product-name">Submariner Date</h3>
+              <p class="product-desc">
+                The benchmark divers' watch waterproof to 300 metres with black Cerachrom ceramic bezel and Chromalight display.
+              </p>
+              <div class="product-meta">
+                <span class="product-price">$10,250</span>
+                <button class="btn-glass-primary" data-view-specs="submariner-date" aria-label="View specifications for Submariner Date">View Details</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Watch 3: Cosmograph Daytona -->
+          <article class="product-card">
+            <div class="product-img-wrapper">
+              <span class="product-badge-corner">Motorsport Legend</span>
+              <img src="assets/images/daytona.jpg" alt="Rolex Cosmograph Daytona 40mm" class="product-img" loading="lazy">
+            </div>
+            <div class="product-content">
+              <span class="product-series">Oyster Perpetual</span>
+              <h3 class="product-name">Cosmograph Daytona</h3>
+              <p class="product-desc">
+                18 ct yellow gold chronograph with black Cerachrom tachymetric bezel, Calibre 4131, and Oysterflex bracelet.
+              </p>
+              <div class="product-meta">
+                <span class="product-price">$32,100</span>
+                <button class="btn-glass-primary" data-view-specs="daytona" aria-label="View specifications for Cosmograph Daytona">View Details</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Watch 4: Day-Date 40 -->
+          <article class="product-card">
+            <div class="product-img-wrapper">
+              <span class="product-badge-corner">Presidents' Watch</span>
+              <img src="assets/images/daydate.jpg" alt="Rolex Day-Date 40 in Everose Gold" class="product-img" loading="lazy">
+            </div>
+            <div class="product-content">
+              <span class="product-series">Oyster Perpetual</span>
+              <h3 class="product-name">Day-Date 40</h3>
+              <p class="product-desc">
+                Precious 18 ct Everose gold with olive green dial, fluted bezel, and the iconic three-piece President bracelet.
+              </p>
+              <div class="product-meta">
+                <span class="product-price">$41,500</span>
+                <button class="btn-glass-primary" data-view-specs="day-date-40" aria-label="View specifications for Day-Date 40">View Details</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Watch 5: GMT-Master II -->
+          <article class="product-card">
+            <div class="product-img-wrapper">
+              <span class="product-badge-corner">Aviation Dual-Time</span>
+              <img src="assets/images/gmt.jpg" alt="Rolex GMT-Master II Pepsi Bezel" class="product-img" loading="lazy">
+            </div>
+            <div class="product-content">
+              <span class="product-series">Oyster Perpetual</span>
+              <h3 class="product-name">GMT-Master II</h3>
+              <p class="product-desc">
+                Bidirectional 24-hour rotatable red and blue Cerachrom bezel, 24-hour arrow hand displaying dual timezones on Jubilee bracelet.
+              </p>
+              <div class="product-meta">
+                <span class="product-price">$11,100</span>
+                <button class="btn-glass-primary" data-view-specs="gmt-master-ii" aria-label="View specifications for GMT-Master II">View Details</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Watch 6: Yacht-Master 42 -->
+          <article class="product-card">
+            <div class="product-img-wrapper">
+              <span class="product-badge-corner">RLX Titanium</span>
+              <img src="assets/images/yachtmaster.jpg" alt="Rolex Yacht-Master 42 in RLX Titanium" class="product-img" loading="lazy">
+            </div>
+            <div class="product-content">
+              <span class="product-series">Oyster Perpetual</span>
+              <h3 class="product-name">Yacht-Master 42</h3>
+              <p class="product-desc">
+                Grade 5 RLX titanium alloy with bidirectional matte black Cerachrom bezel, raised numerals, and Oyster titanium bracelet.
+              </p>
+              <div class="product-meta">
+                <span class="product-price">$14,050</span>
+                <button class="btn-glass-primary" data-view-specs="yacht-master-42" aria-label="View specifications for Yacht-Master 42">View Details</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         TESTIMONIALS & HERITAGE SECTION: Glass Quote Cards
+         ========================================================================== -->
+    <section id="testimonials" class="section-padding">
+      <div class="container">
+        <header class="section-header">
+          <span class="section-badge">Perpetual Legacy</span>
+          <h2 class="section-title">Tested in the World's Extremes</h2>
+          <p class="section-subtitle">
+            From the deepest ocean trenches to the highest peaks, Rolex watches have accompanied pioneers at the furthest frontiers of endurance.
+          </p>
+        </header>
+
+        <div class="testimonials-grid">
+          <article class="testimonial-card">
+            <div>
+              <div class="quote-icon" aria-hidden="true">&ldquo;</div>
+              <p class="quote-text">
+                "The Datejust is more than a precision instrument; it is an heirloom of perseverance and mechanical perfection that transcends generations."
+              </p>
+            </div>
+            <div class="author-info">
+              <div class="author-avatar" aria-hidden="true">JL</div>
+              <div>
+                <h4 class="author-name">Jean-Luc Laurent</h4>
+                <p class="author-role">Horological Historian &amp; Author, Geneva</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="testimonial-card">
+            <div>
+              <div class="quote-icon" aria-hidden="true">&ldquo;</div>
+              <p class="quote-text">
+                "In deep maritime expeditions where seconds separate safety from catastrophe, my Submariner has never faltered under extreme pressure."
+              </p>
+            </div>
+            <div class="author-info">
+              <div class="author-avatar" aria-hidden="true">EM</div>
+              <div>
+                <h4 class="author-name">Elena Morales</h4>
+                <p class="author-role">Marine Expedition Commander &amp; Oceanographer</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="testimonial-card">
+            <div>
+              <div class="quote-icon" aria-hidden="true">&ldquo;</div>
+              <p class="quote-text">
+                "Under the loupe, the micro-finishing on the Calibre 3235 escapement is flawless. Rolex stands alone at the intersection of precision engineering and high art."
+              </p>
+            </div>
+            <div class="author-info">
+              <div class="author-avatar" aria-hidden="true">SV</div>
+              <div>
+                <h4 class="author-name">Sebastian Vance</h4>
+                <p class="author-role">Master Watchmaker, Swiss Chronometry Guild</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         CONCIERGE & APPOINTMENT RESERVATION SECTION
+         ========================================================================== -->
+    <section id="concierge" class="section-padding">
+      <div class="container">
+        <div class="concierge-card">
+          <span class="section-badge">Private Concierge</span>
+          <h2 class="section-title">Schedule a Private Appointment</h2>
+          <p class="section-subtitle">
+            Experience our timepieces firsthand with a private consultation at an Official Rolex Jeweler or receive confidential release allocations.
+          </p>
+
+          <form id="newsletter-form" class="newsletter-form" aria-label="Request consultation form">
+            <input type="email" class="glass-input" placeholder="Enter your email address" required aria-label="Email address for Rolex concierge">
+            <button type="submit" class="btn-glass-primary">Request Access</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==========================================================================
+       SPECIFICATION MODAL
+       ========================================================================== -->
+  <div id="spec-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-watch-name">
+    <div class="modal-card">
+      <button id="modal-close-btn" class="modal-close-btn" aria-label="Close specifications modal">&times;</button>
+      <header class="modal-header">
+        <span id="modal-watch-series" class="modal-eyebrow"></span>
+        <h3 id="modal-watch-name" class="modal-title"></h3>
+      </header>
+
+      <table class="specs-table" aria-label="Timepiece specifications">
+        <tbody id="modal-table-body">
+          <!-- Populated by main.js -->
+        </tbody>
+      </table>
+
+      <div style="text-align: right; margin-top: 24px;">
+        <a href="#concierge" class="btn-glass-primary" onclick="document.getElementById('spec-modal').classList.remove('open'); document.body.style.overflow='';">Inquire Availability</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-notice" role="alert" aria-live="polite"></div>
+
+  <!-- ==========================================================================
+       FOOTER: Glass Panel & Swiss Seal
+       ========================================================================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-panel">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <svg class="brand-crown" viewBox="0 0 48 38" fill="currentColor" width="28" height="22" aria-hidden="true">
+              <circle cx="4.5" cy="11.5" r="3.2"/>
+              <circle cx="14.2" cy="5.2" r="3.2"/>
+              <circle cx="24" cy="3.2" r="3.2"/>
+              <circle cx="33.8" cy="5.2" r="3.2"/>
+              <circle cx="43.5" cy="11.5" r="3.2"/>
+              <path d="M7 16.5 L12.5 30 L35.5 30 L41 16.5 L31.5 24 L24 9.5 L16.5 24 Z"/>
+              <rect x="11.5" y="32.5" width="25" height="3.5" rx="1.5"/>
+            </svg>
+            <span class="brand-text">ROLEX</span>
+          </div>
+
+          <div class="footer-socials">
+            <a href="#hero" class="social-glass-btn" aria-label="Rolex on Instagram">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </a>
+            <a href="#hero" class="social-glass-btn" aria-label="Rolex on YouTube">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
+            </a>
+            <a href="#hero" class="social-glass-btn" aria-label="Rolex on LinkedIn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <span>&copy; 2026 Rolex SA. All intellectual property rights reserved.</span>
+          <div class="swiss-made-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="2" y="2" width="20" height="20" rx="3" fill="#d52b1e"/>
+              <path d="M10 6h4v12h-4z" fill="#ffffff"/>
+              <path d="M6 10h12v4H6z" fill="#ffffff"/>
+            </svg>
+            <span>Swiss Made Precision</span>
+          </div>
+          <a href="#hero" id="back-to-top" class="btn-glass-secondary" style="padding: 6px 16px; font-size: 0.78rem;">Back to Top &uarr;</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="scripts/main.js"></script>
+</body>
+</html>
