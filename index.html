@@ -430,6 +430,68 @@
   <div class="toast-notice" role="alert" aria-live="polite"></div>
 
   <!-- ==========================================================================
+       ROLEX VIRTUAL CONCIERGE CHATBOT WIDGET
+       ========================================================================== -->
+  <!-- Floating Launcher Button -->
+  <button id="chatbot-toggle-btn" class="chatbot-toggle-btn" aria-label="Open Rolex Virtual Concierge">
+    <div class="chatbot-pulse" aria-hidden="true"></div>
+    <svg class="chatbot-btn-crown" viewBox="0 0 48 38" fill="currentColor" width="28" height="22" aria-hidden="true">
+      <circle cx="4.5" cy="11.5" r="3.2"/>
+      <circle cx="14.2" cy="5.2" r="3.2"/>
+      <circle cx="24" cy="3.2" r="3.2"/>
+      <circle cx="33.8" cy="5.2" r="3.2"/>
+      <circle cx="43.5" cy="11.5" r="3.2"/>
+      <path d="M7 16.5 L12.5 30 L35.5 30 L41 16.5 L31.5 24 L24 9.5 L16.5 24 Z"/>
+      <rect x="11.5" y="32.5" width="25" height="3.5" rx="1.5"/>
+    </svg>
+    <span class="chatbot-launcher-label">Concierge</span>
+  </button>
+
+  <!-- Chatbot Glass Panel -->
+  <aside id="chatbot-widget" class="chatbot-widget" role="dialog" aria-label="Rolex Virtual Concierge" aria-hidden="true">
+    <div class="chatbot-header">
+      <div class="chatbot-header-brand">
+        <svg class="chatbot-header-crown" viewBox="0 0 48 38" fill="currentColor" width="24" height="18" aria-hidden="true">
+          <circle cx="4.5" cy="11.5" r="3.2"/>
+          <circle cx="14.2" cy="5.2" r="3.2"/>
+          <circle cx="24" cy="3.2" r="3.2"/>
+          <circle cx="33.8" cy="5.2" r="3.2"/>
+          <circle cx="43.5" cy="11.5" r="3.2"/>
+          <path d="M7 16.5 L12.5 30 L35.5 30 L41 16.5 L31.5 24 L24 9.5 L16.5 24 Z"/>
+          <rect x="11.5" y="32.5" width="25" height="3.5" rx="1.5"/>
+        </svg>
+        <div>
+          <h4 class="chatbot-header-title">Rolex Virtual Concierge</h4>
+          <span class="chatbot-header-status"><span class="status-indicator"></span> Geneva Advisory &bull; Online</span>
+        </div>
+      </div>
+      <button id="chatbot-close-btn" class="chatbot-header-close" aria-label="Close Concierge Chat">&times;</button>
+    </div>
+
+    <!-- Messages Area -->
+    <div id="chatbot-messages" class="chatbot-messages" aria-live="polite"></div>
+
+    <!-- Quick Action Prompt Chips -->
+    <div class="chatbot-chips-container" id="chatbot-chips">
+      <button class="chat-chip" data-query="Recommend a diver's watch">Diver's Watch</button>
+      <button class="chat-chip" data-query="Tell me about Calibre 3235">Calibre 3235</button>
+      <button class="chat-chip" data-query="Datejust 36 price and specs">Datejust 36</button>
+      <button class="chat-chip" data-query="Schedule private appointment">Book Viewing</button>
+    </div>
+
+    <!-- Input Bar -->
+    <form id="chatbot-form" class="chatbot-input-bar">
+      <input type="text" id="chatbot-input" class="chatbot-input" placeholder="Inquire about models, movements, or pricing..." autocomplete="off" aria-label="Type your horological question">
+      <button type="submit" id="chatbot-send-btn" class="chatbot-send-btn" aria-label="Send Message">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </form>
+  </aside>
+
+  <!-- ==========================================================================
        FOOTER: Glass Panel & Swiss Seal
        ========================================================================== -->
   <footer class="site-footer">
