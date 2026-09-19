@@ -988,12 +988,112 @@
     }
   }
 
+  // ==========================================================================
+  // LUXURY AMBIENT SOUNDTRACK ENGINE: Solo Piano
+  // ==========================================================================
+  function setupBackgroundMusic() {
+    const audio = document.getElementById('bg-music');
+    const toggleBtn = document.getElementById('music-toggle-btn');
+    if (!audio || !toggleBtn) return;
+
+    let isPlaying = false;
+    let hasUserInteracted = false;
+    const TARGET_VOLUME = 0.38; // Subtle luxury ambience level
+
+    audio.volume = 0;
+
+    function fadeInAudio() {
+      let vol = 0.05;
+      audio.volume = vol;
+      const fadeInterval = setInterval(() => {
+        vol += 0.03;
+        if (vol >= TARGET_VOLUME) {
+          audio.volume = TARGET_VOLUME;
+          clearInterval(fadeInterval);
+        } else {
+          audio.volume = vol;
+        }
+      }, 80);
+    }
+
+    function fadeOutAudio(onComplete) {
+      let vol = audio.volume;
+      const fadeInterval = setInterval(() => {
+        vol -= 0.04;
+        if (vol <= 0.02) {
+          audio.volume = 0;
+          audio.pause();
+          clearInterval(fadeInterval);
+          if (onComplete) onComplete();
+        } else {
+          audio.volume = vol;
+        }
+      }, 60);
+    }
+
+    function playMusic() {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            isPlaying = true;
+            toggleBtn.classList.add('playing');
+            toggleBtn.setAttribute('title', 'Pause Ambient Music');
+            toggleBtn.setAttribute('aria-label', 'Pause Ambient Music');
+            fadeInAudio();
+          })
+          .catch(() => {
+            // Browser autoplay restrictions prevented play until interaction
+            isPlaying = false;
+            toggleBtn.classList.remove('playing');
+          });
+      }
+    }
+
+    function pauseMusic() {
+      isPlaying = false;
+      toggleBtn.classList.remove('playing');
+      toggleBtn.setAttribute('title', 'Play Ambient Music');
+      toggleBtn.setAttribute('aria-label', 'Play Ambient Music');
+      fadeOutAudio();
+    }
+
+    // Toggle button click
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      hasUserInteracted = true;
+      if (isPlaying) {
+        pauseMusic();
+      } else {
+        playMusic();
+      }
+    });
+
+    // Auto-start ambient music smoothly on first interaction (click, scroll, keypress, touch)
+    function onFirstInteraction() {
+      if (!hasUserInteracted && !isPlaying) {
+        hasUserInteracted = true;
+        playMusic();
+      }
+      window.removeEventListener('click', onFirstInteraction);
+      window.removeEventListener('touchstart', onFirstInteraction);
+      window.removeEventListener('keydown', onFirstInteraction);
+      window.removeEventListener('wheel', onFirstInteraction);
+    }
+
+    window.addEventListener('click', onFirstInteraction, { passive: true, once: true });
+    window.addEventListener('touchstart', onFirstInteraction, { passive: true, once: true });
+    window.addEventListener('keydown', onFirstInteraction, { passive: true, once: true });
+    window.addEventListener('wheel', onFirstInteraction, { passive: true, once: true });
+  }
+
   // --- Initialize Immediately on DOMContentLoaded ---
   document.addEventListener('DOMContentLoaded', () => {
     setupCanvasDimensions();
     preloadFrames();
     setupInteractions();
     setupChatbot();
+    setupBackgroundMusic();
   });
 
 })();

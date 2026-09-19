@@ -47,6 +47,16 @@
       </ul>
 
       <div class="nav-actions">
+        <!-- Luxury Ambient Background Music Controller -->
+        <button id="music-toggle-btn" class="music-toggle-btn" aria-label="Toggle ambient background music" title="Rolex Ambient Soundtrack - Solo Piano">
+          <div class="music-bars" aria-hidden="true">
+            <span class="bar bar-1"></span>
+            <span class="bar bar-2"></span>
+            <span class="bar bar-3"></span>
+            <span class="bar bar-4"></span>
+          </div>
+          <span class="music-label">Music</span>
+        </button>
         <a href="#concierge" class="btn-glass-primary">Book Consultation</a>
         <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle navigation menu">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -58,6 +68,14 @@
       </div>
     </nav>
   </header>
+
+  <!-- ==========================================================================
+       BACKGROUND AMBIENT SOUNDTRACK: Solo Piano
+       ========================================================================== -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="assets/audio/solo-piano.mp3" type="audio/mpeg">
+    <source src="MUSIC/Solo%20Piano%20Version.mp3" type="audio/mpeg">
+  </audio>
 
   <main>
     <!-- ==========================================================================
