@@ -14,7 +14,8 @@
 
   // --- Configuration ---
   const TOTAL_FRAMES = 300;
-  const FRAME_BASE_PATH = 'assets/frames/frame_';
+  // High quality 1080P frames for ultra-crisp Retina horological disassembly
+  const FRAME_BASE_PATH = '1080 P/frame_';
   const FRAME_EXTENSION = '.jpg';
 
   // --- State Variables ---
@@ -206,10 +207,12 @@
 
     // Clear canvas
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
 
-    // Calculate object-fit: cover projection
-    const imgWidth = img.naturalWidth || 1280;
-    const imgHeight = img.naturalHeight || 720;
+    // Calculate object-fit: cover projection (1080p native aspect ratio)
+    const imgWidth = img.naturalWidth || 1920;
+    const imgHeight = img.naturalHeight || 1080;
     const imgRatio = imgWidth / imgHeight;
     const canvasRatio = canvasWidth / canvasHeight;
 
@@ -291,6 +294,7 @@
       const frameNum = String(i).padStart(4, '0');
       const frameIndex = i - 1;
 
+      // Primary source: 1080 P high quality folder
       img.src = `${FRAME_BASE_PATH}${frameNum}${FRAME_EXTENSION}`;
 
       img.onload = () => {
@@ -300,14 +304,26 @@
         if (frameIndex === 0 && currentFrameIndex === 0) {
           drawFrame(0);
         } else if (frameIndex === currentFrameIndex) {
-          // If the currently requested frame just arrived, draw it
           drawFrame(currentFrameIndex);
         }
       };
 
       img.onerror = () => {
-        // Even on error, mark to allow nearest-frame search to proceed
-        loadedFlags[frameIndex] = false;
+        // High quality fallback: assets/frames/ (also 1080p)
+        const fallback = new Image();
+        fallback.src = `assets/frames/frame_${frameNum}.jpg`;
+        fallback.onload = () => {
+          frames[frameIndex] = fallback;
+          loadedFlags[frameIndex] = true;
+          if (frameIndex === 0 && currentFrameIndex === 0) {
+            drawFrame(0);
+          } else if (frameIndex === currentFrameIndex) {
+            drawFrame(currentFrameIndex);
+          }
+        };
+        fallback.onerror = () => {
+          loadedFlags[frameIndex] = false;
+        };
       };
 
       frames.push(img);
